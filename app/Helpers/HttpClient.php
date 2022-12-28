@@ -11,6 +11,17 @@ class HttpClient
     {   //jika method get ,langsung return response dengan method get
         if ($method == "GET") return Http::get($url)->json();
 
+
+
+        $headers = [];
+        $token = session()->get("token", "");
+        if ($token != "") {
+            $headers["Authorization"] = "Bearer $token";
+        }
+
+        //jika method get ,langsung return response dengan method get
+        if ($method == "GET") return Http::withHeaders($headers)->get($url)->json();
+
         //jika terdapat file, client berupa multipart
         if (sizeOf($files) > 0) {
             $client = Http::asMultipart();
@@ -29,6 +40,6 @@ class HttpClient
         }
 
         //fetch post 
-        return Http::post($url, $body)->json();
+        return Http::withHeaders($headers)->post($url, $body)->json();
     }
 }
